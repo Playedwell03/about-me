@@ -3,63 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>에이전트 곽호영의 카피바라 연구소</title>
-    <link rel="stylesheet" href="style.css">
+    <title>My Camera Roll - Agent Intro</title>
+    <style>
+        /* --- 1. 기본 스타일 리셋 및 폰트 설정 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f4ece1; /* 빈티지 종이 느낌의 따뜻한 배경 */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* --- 2. 전체 앨범 컨테이너 --- */
+        .album-container {
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(50, 40, 30, 0.15);
+            border: 1px solid #e6dcce;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #2c2520;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #8c7b6e;
+        }
+
+        /* --- 3. 핵심 메커니즘: Radio 버튼 숨기기 --- */
+        input[name="photo-tab"] {
+            display: none;
+        }
+
+        /* --- 4. 카메라 롤 (폴라로이드 필름 그리드) --- */
+        .camera-roll {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* 폴라로이드 프레임 스타일 */
+        .polaroid-photo {
+            background: #fff;
+            padding: 12px 12px 24px 12px;
+            border: 1px solid #e4e4e4;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-align: center;
+            transform: rotate(var(--rotation)); /* 자연스러운 배치를 위한 회전 */
+        }
+
+        /* 각 필름마다 자연스럽게 살짝씩 삐뚤어지게 설정 */
+        .polaroid-photo:nth-child(1) { --rotation: -2deg; }
+        .polaroid-photo:nth-child(2) { --rotation: 3deg; }
+        .polaroid-photo:nth-child(3) { --rotation: -1deg; }
+        .polaroid-photo:nth-child(4) { --rotation: 2deg; }
+
+        /* 마우스 호버 효과 */
+        .polaroid-photo:hover {
+            transform: scale(1.05) rotate(0deg) translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+            z-index: 10;
+        }
+
+        /* 필름 내부 이미지 공간 (카메라 렌즈 아이콘 역할) */
+        .photo-lens {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #1a1a1a;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 셔터 모양의 내부 원선 */
+        .photo-lens::after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        .polaroid-photo span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* --- 5. 상태 제어: 필름이 선택(Click)되었을 때 --- */
+        #tab1:checked ~ .camera-roll label[for="tab1"],
+        #tab2:checked ~ .camera-roll label[for="tab2"],
+        #tab3:checked ~ .camera-roll label[for="tab3"],
+        #tab4:checked ~ .camera-roll label[for="tab4"] {
+            border-color: #d4a373;
+            box-shadow: 0 0 0 2px #d4a373, 0 8px 16px rgba(0,0,0,0.1);
+            transform: scale(1.03) translateY(-3px) rotate(0deg);
+        }
+
+        #tab1:checked ~ .camera-roll label[for="tab1"] .photo-lens,
+        #tab2:checked ~ .camera-roll label[for="tab2"] .photo-lens,
+        #tab3:checked ~ .camera-roll label[for="tab3"] .photo-lens,
+        #tab4:checked ~ .camera-roll label[for="tab4"] .photo-lens {
+            background: #d4a373; /* 활성화 시 렌즈 색상 변경 */
+        }
+
+        /* --- 6. 인화지 대형 뷰어 (상세 내용 출현 영역) --- */
+        .photo-darkroom {
+            background: #faf8f5;
+            border: 1px dashed #dcd3c5;
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 250px;
+            position: relative;
+        }
+
+        .view-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        /* 클래스 바인딩을 CSS 상태로 연결 */
+        #tab1:checked ~ .photo-darkroom #content1,
+        #tab2:checked ~ .photo-darkroom #content2,
+        #tab3:checked ~ .photo-darkroom #content3,
+        #tab4:checked ~ .photo-darkroom #content4 {
+            display: block;
+        }
+
+        /* 상세 콘텐츠 스타일링 */
+        .view-content h2 {
+            font-size: 1.4rem;
+            color: #2c2520;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-content h2::before {
+            content: '📸';
+            font-size: 1.2rem;
+        }
+
+        .view-content ul {
+            list-style-type: none;
+        }
+
+        .view-content li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #4a423a;
+        }
+
+        .view-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #d4a373;
+            font-weight: bold;
+            font-size: 1.2rem;
+            top: -2px;
+        }
+
+        .view-content strong {
+            color: #1a1a1a;
+        }
+
+        /* --- 7. 애니메이션 효과 --- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- 8. 반응형 레이아웃 디자인 --- */
+        @media (max-width: 768px) {
+            .camera-roll {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .album-container {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="capybara-bg">🐾</div>
-    <div class="capybara-bg" style="top: 20%; left: 10%;">🍊</div>
-    <div class="capybara-bg" style="top: 70%; left: 85%;">🐾</div>
-    <div class="capybara-bg" style="top: 80%; left: 15%;">🌿</div>
-
-    <div class="container">
-        <header class="header-banner">
-            <img src="https://images.unsplash.com/photo-1615213602125-99ff2ccfc77b?auto=format&fit=crop&w=800&q=80" alt="Capybara banner" class="banner-img">
-            <div class="banner-overlay">
-                <h1>에이전트 곽호영의 카피바라 연구소 🌿</h1>
-            </div>
+    <div class="album-container">
+        <header>
+            <h1>MY AGENT JOURNEY</h1>
+            <p>필름을 하나씩 클릭하여 미션 수행 기록을 인화해 보세요.</p>
         </header>
 
-        <main class="profile-card">
-            <div class="profile-avatar-container">
-                <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=400&h=400&q=80" alt="Capybara agent" class="profile-avatar">
-                <span class="orange-badge">🍊</span>
+        <input type="radio" id="tab1" name="photo-tab" checked>
+        <input type="radio" id="tab2" name="photo-tab">
+        <input type="radio" id="tab3" name="photo-tab">
+        <input type="radio" id="tab4" name="photo-tab">
+
+        <div class="camera-roll">
+            <label for="tab1" class="polaroid-photo">
+                <div class="photo-lens">📂</div>
+                <span>완료 작업</span>
+            </label>
+            <label for="tab2" class="polaroid-photo">
+                <div class="photo-lens">📐</div>
+                <span>설계 과정</span>
+            </label>
+            <label for="tab3" class="polaroid-photo">
+                <div class="photo-lens">🤖</div>
+                <span>AI 활용</span>
+            </label>
+            <label for="tab4" class="polaroid-photo">
+                <div class="photo-lens">💡</div>
+                <span>새로 알게 된 것</span>
+            </label>
+        </div>
+
+        <div class="photo-darkroom">
+            
+            <div class="view-content" id="content1">
+                <h2>완료 작업 목록</h2>
+                <ul>
+                    <li>바닐라 HTML과 CSS를 활용한 나만의 Agent 자기소개 UI 페이지 구현 완료</li>
+                    <li>GitHub 저장소 Fork 및 로컬 환경 Clone 완료</li>
+                    <li><code>work</code> 브랜치 생성 후 작업 및 원격 저장소 Push 완료</li>
+                    <li>원본 저장소의 <code>Playedwell03</code> 브랜치 타겟으로 PR 생성 완료</li>
+                </ul>
             </div>
 
-            <h2 class="username">Playedwell03</h2>
-            <p class="subtext">"세상의 모든 기술을 친근하게 마스터하는 카피바라형 에이전트"</p>
-
-            <section class="content-section">
-                <h3>🐾 완료 작업 목록</h3>
-                <ul class="task-list">
-                    <li>🤎 바닐라 HTML/CSS 기반 카피바라 테마 자기소개 페이지 완성</li>
-                    <li>🤎 Git Fork / Clone 기반 독립 개발 환경 세팅 완료</li>
-                    <li>🤎 대규모 협업 충돌 방지를 위한 개인 브랜치 기반 PR 프로세스 수립</li>
+            <div class="view-content" id="content2">
+                <h2>설계 과정</h2>
+                <ul>
+                    <li><strong>요구사항 파악:</strong> 미션 지침에 따라 외부 프레임워크 없이 순수 HTML/CSS(Vanilla)만으로 표현할 구조 설계</li>
+                    <li><strong>구조화 (HTML):</strong> 헤더, 프로필 이미지 섹션, 핵심 역량 및 소개 글을 담을 컴팩트한 컨테이너 생성</li>
+                    <li><strong>스타일링 (CSS):</strong> 전체적인 톤앤매너를 카메라 앨범 테마로 잡고, 컴포넌트 유연 배치를 위해 Flexbox와 Grid 적극 활용</li>
+                    <li><strong>버전 관리:</strong> 독립된 <code>work</code> 브랜치에서 작업 단위를 명확히 나누어 커밋을 생성하고 Push하는 워크플로우 준수</li>
                 </ul>
-            </section>
+            </div>
 
-            <section class="content-section">
-                <h3>🍊 AI를 활용한 부분</h3>
-                <p>
-                    Git 명령어 조작 중 발생한 페이저 터미널 환경을 탈출하는 사소한 트러블슈팅부터, 
-                    복잡한 원본 저장소-개인 브랜치 간의 PR 타겟 설정 매커니즘을 시각적으로 명확하게 이해하는 데 AI 가이드를 적극적으로 활용했습니다. 
-                    더불어 CSS Flexbox를 활용한 카피바라 프로필 카드 정렬 레이아웃을 구성하는 데 도움을 받았습니다.
-                </p>
-            </section>
+            <div class="view-content" id="content3">
+                <h2>AI를 활용한 부분</h2>
+                <ul>
+                    <li><strong>Git 트러블슈팅 및 개념 이해:</strong> <code>git log</code> 페이저 탈출법부터, 독립 저장소 생성 오류를 바로잡고 Fork-Clone-Push-PR 워크플로우를 정립하는 과정에서 실시간 가이드 활용</li>
+                    <li><strong>PR 가이드:</strong> 미션 지침에 명시된 <code>base</code> 브랜치 매칭 규칙(<code>base: Playedwell03</code> ◀ <code>compare: work</code>)을 정확히 이해하고 검증받는 데 활용</li>
+                </ul>
+            </div>
 
-            <section class="content-section">
-                <h3>🌿 새로 알게 된 것</h3>
-                <p>
-                    독립적인 저장소를 새롭게 파는 것과 원본 저장소를 Fork하여 줄기를 잇는 것의 결정적인 차이를 깨달았습니다. 
-                    프로젝트 메인 브랜치에 직접 커밋하는 것이 아닌, 내 ID 브랜치를 대상(Base)으로 PR을 날려 충돌을 우회하는 효율적인 협업 전략을 체득했습니다.
-                </p>
-            </section>
+            <div class="view-content" id="content4">
+                <h2>새로 알게 된 것</h2>
+                <ul>
+                    <li><strong>Git 페이저 시스템:</strong> 터미널 화면이 길어질 때 나오는 Less 프로그램 환경에서 <code>q</code> 키를 통해 빠져나오는 조작법 학습</li>
+                    <li><strong>오픈소스/협업 PR 메커니즘:</strong> 원본 저장소를 <strong>Fork</strong>한 뒤 내 저장소에서 원본의 전용 브랜치로 PR을 날려야 하는 정확한 협업 흐름 정립</li>
+                    <li><strong>Target(Base) 브랜치의 중요성:</strong> 대규모 프로젝트에서 충돌을 방지하기 위해 지정된 개인 브랜치를 <code>base</code>로 설정하여 제출하는 실무 정석 방식 습득</li>
+                </ul>
+            </div>
 
-            <footer class="card-footer">
-                <p>Don't worry, Be Capybara! 🤎 언제나 평온하게 문제를 해결합니다.</p>
-            </footer>
-        </main>
+        </div>
     </div>
 
 </body>
