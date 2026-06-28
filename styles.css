@@ -1,0 +1,269 @@
+:root {
+  --bg: #07111f;
+  --bg-soft: #0d1729;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-strong: rgba(255, 255, 255, 0.09);
+  --text: #f4f7fb;
+  --muted: #9eb0c9;
+  --accent: #6ee7f9;
+  --accent-2: #7c8cff;
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #12233d 0%, var(--bg) 50%, #050a12 100%);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+img {
+  max-width: 100%;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(16px);
+  background: rgba(7, 17, 31, 0.8);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+.hero {
+  min-height: 88vh;
+  display: grid;
+  align-items: center;
+  padding: 4rem 0 3rem;
+}
+
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.hero h1,
+.section-heading h2 {
+  margin: 0 0 1rem;
+  line-height: 1.2;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  max-width: 780px;
+}
+
+.hero-text {
+  max-width: 760px;
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin-bottom: 1.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.85rem 1.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button.primary {
+  color: #04131d;
+  background: linear-gradient(90deg, var(--accent), #9cf1ff);
+  box-shadow: 0 10px 24px rgba(110, 231, 249, 0.25);
+}
+
+.button.secondary {
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+.section-heading {
+  margin-bottom: 1.6rem;
+}
+
+.about-card,
+.info-card,
+.project-card,
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  padding: 1.4rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.about-card p {
+  color: var(--muted);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.wide-card-wrap {
+  display: flex;
+}
+
+.wide-card {
+  width: 100%;
+  padding: 1.8rem 2rem;
+}
+
+.wide-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+}
+
+.wide-card p {
+  max-width: 860px;
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.info-card h3,
+.project-card h3 {
+  margin-top: 0;
+}
+
+.info-card p,
+.project-card p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.skill-groups {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.badge-list span {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.tags {
+  color: var(--accent) !important;
+  font-size: 0.95rem;
+  margin-bottom: 0.7rem;
+}
+
+.contact-section {
+  padding-bottom: 2rem;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1rem 1.5rem 2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero {
+    padding-top: 2rem;
+  }
+
+  .contact-card {
+    align-items: flex-start;
+  }
+}
